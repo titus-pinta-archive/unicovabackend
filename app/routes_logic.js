@@ -43,6 +43,14 @@ module.exports = app => {
 			.catch(Utils.sendError(res));
 	});
 
+	//Authentificate Admin
+	app.get('/adminlogin', (req, res) => {
+		if (req.query.name == 'admin' && req.query.password == 'admin') {
+			const token = jwt.sign({admin: true}, 'UNICOVA');
+			res.json({jwt: token});
+		}
+	});
+
 	//Reserve Parking
 	
 	app.post('/api/reserve/:parking_id/:user_id',
