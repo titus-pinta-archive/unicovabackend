@@ -32,7 +32,7 @@ module.exports = app => {
 					var u = users[0].toObject();
 					delete u.password;
 					const token = jwt.sign({
-						
+						exp: (new Date().getTime() + 3600 * 1000)/1000,
 						data: u
 						}, 'UNICOVA');
 					res.json({jwt: token});
@@ -46,7 +46,9 @@ module.exports = app => {
 	//Authentificate Admin
 	app.get('/adminlogin', (req, res) => {
 		if (req.query.name == 'admin' && req.query.password == 'admin') {
-			const token = jwt.sign({admin: true}, 'UNICOVA');
+			const token = jwt.sign({
+				exp: (new Date().getTime() + 3600 * 1000)/1000,
+				data: {admin: true}} , 'UNICOVA');
 			res.json({jwt: token});
 		}
 	});
