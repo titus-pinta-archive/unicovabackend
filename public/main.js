@@ -739,11 +739,19 @@ var LoginComponent = /** @class */ (function () {
     LoginComponent.prototype.logIn = function () {
         var _this = this;
         if (this.router.url === '/admin') {
-            this.user.loginadmin(this.loginForm.value);
+            this.user.loginadmin(this.loginForm.value).subscribe(function (ret) {
+                if (ret.jwt != undefined) {
+                    _this.storage.set('jwt', ret.jwt);
+                    _this.flash.show('Log in succesful', { cssClass: 'flash-succes' });
+                    _this.dialogRef.close(true);
+                }
+                else {
+                    _this.flash.show(ret, { cssClass: 'flash-error' });
+                }
+            });
         }
         else {
             this.user.login(this.loginForm.value).subscribe(function (ret) {
-                console.log(ret);
                 if (ret.jwt != undefined) {
                     _this.storage.set('jwt', ret.jwt);
                     _this.flash.show('Log in succesful', { cssClass: 'flash-succes' });
@@ -1453,26 +1461,21 @@ var UsersService = /** @class */ (function () {
         this.http = http;
         this.ROOT_URL = '';
         this.LOGIN_URL = '/login';
+        this.ADMIN_LOGIN_URL = '/adminlogin';
+        this.REGISTER_URL = '/api/users';
     }
-    UsersService.prototype.addUser = function () {
+    UsersService.prototype.addUser = function (value) {
+        return this.http.post(this.REGISTER_URL, { params: value });
     };
     UsersService.prototype.deleteUser = function () {
     };
     UsersService.prototype.updateUser = function () {
     };
     UsersService.prototype.login = function (value) {
-        console.log(value.email);
-        return this.http.get(this.LOGIN_URL, { params: {
-                email: value.email,
-                password: value.password
-            } });
+        return this.http.get(this.LOGIN_URL, { params: value });
     };
     UsersService.prototype.loginadmin = function (value) {
-        console.log(value.email);
-        return this.http.get(this.LOGIN_URL, { params: {
-                email: value.email,
-                password: value.password
-            } });
+        return this.http.get(this.ADMIN_LOGIN_URL, { params: value });
     };
     UsersService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({

@@ -29,6 +29,7 @@ module.exports = app => {
 		parking.save()
 			.then(parking => res.json(parking))
 			.catch(sendError(res));
+		Utils.aggregateAll();
 	});
 	app.put('/api/parkings/:parkings_id',
 		passport.authenticate('jwt', {session: false}), Utils.adminRole,
@@ -38,6 +39,7 @@ module.exports = app => {
 			.exec()
 			.then(parking => res.json(parking))
 			.catch(sendError(res));
+		Utils.aggregateAll();
 	});
 	app.delete('/api/parkings/:parkings_id',
 		passport.authenticate('jwt', {session: false}), Utils.adminRole,
@@ -46,5 +48,6 @@ module.exports = app => {
 			.exec()
 			.then(parking => res.json(parking))
 			.catch(sendError(res));
+		Utils.aggregateAll();
 	});
 }

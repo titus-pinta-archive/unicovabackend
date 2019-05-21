@@ -34,10 +34,7 @@ export class LoginComponent implements OnInit {
 
 	logIn() {
 		if (this.router.url === '/admin') {
-			this.user.loginadmin(this.loginForm.value);
-		} else {
-			this.user.login(this.loginForm.value).subscribe(ret => {
-				console.log(ret);
+			this.user.loginadmin(this.loginForm.value).subscribe(ret => {
 				if (ret.jwt != undefined) {
 					this.storage.set('jwt', ret.jwt);
 					this.flash.show('Log in succesful', {cssClass: 'flash-succes'});
@@ -46,8 +43,18 @@ export class LoginComponent implements OnInit {
 				} else {
 					this.flash.show(ret, {cssClass: 'flash-error'});
 				}
-			}); 
+			});
+		} else {
+			this.user.login(this.loginForm.value).subscribe(ret => {
+				if (ret.jwt != undefined) {
+					this.storage.set('jwt', ret.jwt);
+					this.flash.show('Log in succesful', {cssClass: 'flash-succes'});
+					this.dialogRef.close(true);
+				
+				} else {
+					this.flash.show(ret, {cssClass: 'flash-error'});
+				}
+			});
 		}
 	}
-
 }

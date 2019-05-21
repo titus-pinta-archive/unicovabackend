@@ -11,13 +11,16 @@ export class UsersService {
 
 	readonly ROOT_URL = '';
 	readonly LOGIN_URL = '/login';
+	readonly ADMIN_LOGIN_URL = '/adminlogin';
+	readonly REGISTER_URL = '/api/users';
+
 
 
 	constructor(private http: HttpClient) {
 	}
 
-	addUser() {
-	
+	addUser(value: any) {
+		return this.http.post(this.REGISTER_URL, {params: value});
 	}
 
 	deleteUser() {
@@ -29,17 +32,9 @@ export class UsersService {
 	}
 
 	login(value: any): any {
-		console.log(value.email);
-		return this.http.get(this.LOGIN_URL, {params: {
-			email: value.email, 
-			password: value.password
-		}});
+		return this.http.get(this.LOGIN_URL, {params: value});
 	}
 	loginadmin(value: any): any {
-		console.log(value.email);
-		return this.http.get(this.LOGIN_URL, {params: {
-			email: value.email, 
-			password: value.password
-		}});
+		return this.http.get(this.ADMIN_LOGIN_URL, {params: value});
 	}
 }
