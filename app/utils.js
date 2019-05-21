@@ -186,28 +186,7 @@ const addReservation = (user_id, parking_id, time, type) => {
 	rule.hour = time.getHours();
 
 	var job = schedule.scheduleJob(rule, () => {
-		reserveParking(user_id, parking_id, type, parking_types[type].price);
-
-		const Event = new Events.reserveSpotEvent({
-			time: Date.now(),
-			spot: parking_id,
-			user: user_id,
-			type: type,
-			price: config.parking_types[type].price
-		});
-		Event.save()
-			.then(event => {
-				setTimeout(() => {
-					const FreeEvent = new Events.freeSpotEvent({
-						time: Date.now(),
-						spot: parking_id,
-						user: user_id
-					});
-					FreeEvent.save()
-						.then(() => Utils.aggregateAll());
-			}, config.parking_types[type].time * 1000);
-			Utils.aggregateAll();
-		});
+		reserveParking(user_id, parking_id, type, config.parking_types[type].price);
 	});
 	reservations[`${user_id}_${time}`] = job;
 }
@@ -226,7 +205,7 @@ const initReservations = () => {
 }
 
 const reserveParking = (user_id, parking_id, type, price, time, when) => {
-	isFreeSpot(req.params.parking_id)
+	isFreeSpot(parking_id)
 		.then( () => {
 			const Event = new Events.reserveSpotEvent({
 				time: Date.now(),
@@ -235,25 +214,29 @@ const reserveParking = (user_id, parking_id, type, price, time, when) => {
 				type: type,
 				price: price
 			});
-			schedule.scheduleJob(Date.now() ? !when : when, () => {
+			const fct = () => {
 				Event.save()
 					.then(event => {
 						//Utils.aggregateSpot(event.spot);
 						setTimeout(() => {
 							const FreeEvent = new Events.freeSpotEvent({
 								time: Date.now(),
-								spot: req.params.parking_id,
-								user: req.params.user_id
+								spot: parking_id,
+								user: user_id
 							});
 							FreeEvent.save()
 								.then(() => Utils.aggregateAll());
 						}, time * 1000);
 						Utils.aggregateAll();
-						res.json(event);
 					})
 					.catch(err => console.log(err));
-				}
-			);});
+			};
+			if (when > Date.now()) {
+				schedule.scheduleJob(when, fct);
+			} else {
+				fct();
+			}
+		});
 }
 
 const sseSubscribe = (app) => {
@@ -273,5 +256,6 @@ module.exports = {
 	initReservations: initReservations,
 	adminRole: adminRole,
 	userRole: userRole,
-	sseSubscribe: sseSubscribe
+	sseSubscribe: sseSubscribe,
+	reserveParking: reserveParking
 }

@@ -10,7 +10,7 @@ export class UsersService {
 	parkings: any;
 
 	readonly ROOT_URL = '';
-	readonly LOGIN_URL = 'localhost:8080/login';
+	readonly LOGIN_URL = '/login';
 
 
 	constructor(private http: HttpClient) {

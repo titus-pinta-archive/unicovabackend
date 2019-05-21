@@ -1,11 +1,11 @@
 <mat-accordion>
 	<mat-expansion-panel *ngFor="let parking of this.parkingList | async">
 		<mat-expansion-panel-header>
-			<mat-panel-title>{{ parking.name }}</mat-panel-title>
-			<mat-panel-description>2/2</mat-panel-description>
+			<mat-panel-title>{{ parking.address }}</mat-panel-title>
+			<mat-panel-description>{{ parking.spots.free }}/{{ parking.spots.total }}</mat-panel-description>
 		</mat-expansion-panel-header>
-		<agm-map [latitude]="12.1" [longitude]="22.2">
-			<agm-marker [latitude]="12.1" [longitude]="22.2"></agm-marker>
+		<agm-map [latitude]="parking.location.x" [longitude]="parking.location.y">
+			<agm-marker [latitude]="parking.location.x" [longitude]="parking.location.y"></agm-marker>
 		</agm-map>
 		<mat-action-row *ngIf="storage.get('jwt') && router.url === '/'">
 	    		<button mat-button color="accent" (click)="reserveNow()">REZERVE NOW</button>

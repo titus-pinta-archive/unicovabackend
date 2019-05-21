@@ -10,8 +10,7 @@ import { Observable, of } from 'rxjs';
 export class ParkingsService {
 	parkings: any;
 
-	readonly ROOT_URL = 'https://jsonplaceholder.typicode.com/users';
-	//readonly ROOT_URL = 'localhost:8080/parkings';
+	readonly ROOT_URL = '/parkings';
 
 
 	constructor(private http: HttpClient) {

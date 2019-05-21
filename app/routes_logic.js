@@ -67,22 +67,25 @@ module.exports = app => {
 			})
 			.catch(Utils.sendError(res));
 
-		Utils.isFreeSpot(req.params.parking_id)
-			.then( () => {
-				const type = req.body.type;
-				const price = config.parking_types[type].price;
-				const time = config.parking_types[type].time;
-				Utils.reserveParking(
-					req.params.user_id,
-					req.params.parking_id,
-					type,
-					price,
-					time,
-					Date.now() ? !(req.body.time) : req.body.time
-				)
-
-			})
-			.catch(Utils.sendError(res));
+			const type = req.body.type;
+			const price = config.parking_types[type].price;
+			const time = config.parking_types[type].time;
+			var when;
+			if (req.body.time) {
+				when = req.body.time;
+			} else {
+				when = Date.now();
+			}
+			Utils.reserveParking(
+				req.params.user_id,
+				req.params.parking_id,
+				type,
+				price,
+				time,
+				when
+			)
+			console.log(when);
+			res.json({succes: true});
 		});
 
 	//Block Spot
