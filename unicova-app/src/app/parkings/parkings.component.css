@@ -1,0 +1,8 @@
+mat-panel-title {
+	flex: 10;
+}
+
+agm-map {
+	height: 300px;
+	z-index: -100;
+}

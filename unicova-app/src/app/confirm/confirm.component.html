@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Are you sure?</h2>
+<form>
+<mat-dialog-content>
+	<mat-form-field *ngIf="this.data.input === 'time'">
+		<input type="date" matInput placeholder="When?" formControlName="time">
+	</mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+	<button mat-button mat-dialog-close>NO</button>
+	<button color="primary" mat-raised-button [mat-dialog-close]="true" cdkFocusInitial>YES</button>
+</mat-dialog-actions>
+</form>

@@ -1,0 +1,23 @@
+<mat-accordion>
+	<mat-expansion-panel *ngFor="let parking of this.parkingList | async">
+		<mat-expansion-panel-header>
+			<mat-panel-title>{{ parking.name }}</mat-panel-title>
+			<mat-panel-description>2/2</mat-panel-description>
+		</mat-expansion-panel-header>
+		<agm-map [latitude]="12.1" [longitude]="22.2">
+			<agm-marker [latitude]="12.1" [longitude]="22.2"></agm-marker>
+		</agm-map>
+		<mat-action-row *ngIf="storage.get('jwt') && router.url === '/'">
+	    		<button mat-button color="accent" (click)="reserveNow()">REZERVE NOW</button>
+	    		<button mat-button color="accent" (click)="reserve()">REZERVE</button>
+	    		<button mat-button color="accent" (click)="schedule()">SCHEDULE</button>
+	      	</mat-action-row>
+		<mat-action-row *ngIf="router.url === '/admin'">
+	    		<button mat-button color="warn" (click)=block()>BLOCK</button>
+	    		<button mat-button color="warn" (click)="unblock()">UNBLOCK</button>
+	    		<button mat-button color="primary" (click)="update()">UPDATE</button>
+	    		<button mat-button color="warn" (click)="delete()">DELETE</button>
+	      	</mat-action-row>
+	</mat-expansion-panel>
+</mat-accordion>
+

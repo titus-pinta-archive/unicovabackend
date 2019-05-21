@@ -203,8 +203,8 @@ const addReservation = (user_id, parking_id, time, type) => {
 					});
 					FreeEvent.save()
 						.then(() => Utils.aggregateAll());
-					Utils.aggregateAll();
 			}, config.parking_types[type].time * 1000);
+			Utils.aggregateAll();
 		});
 	});
 	reservations[`${user_id}_${time}`] = job;

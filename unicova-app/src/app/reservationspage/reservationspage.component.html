@@ -1,0 +1,6 @@
+<mat-list role="list">
+	<div 
+	  *ngFor="let reservation of this.reservationsList | async">
+		<mat-list-item role="listitem" > {{ reservation.name }}</mat-list-item><mat-divider></mat-divider>
+	</div>
+</mat-list>

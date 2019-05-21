@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" class="mat-elevation-z4">
+	<span>Unicova</span>
+	<span class="fill-remaining-space"></span>
+	<a *ngIf="!(storage.get('jwt')) && router.url === '/'" mat-button (click)="openRegister()">Register</a>
+	<a *ngIf="!(storage.get('jwt')) && router.url === '/'" mat-button (click)="openLogin()">Login</a>
+	<a *ngIf="(storage.get('jwt')) && router.url === '/'" mat-button (click)="logOut()">Logout</a>
+	<a *ngIf="(storage.get('jwt')) && router.url === '/'" mat-button (click)="openReservations()">My Reservations</a>
+	<a *ngIf="router.url === '/admin'" mat-button (click)="openParking()">Add Parking</a>
+	<a *ngIf="router.url === '/admin'" routerLink="profits"  mat-button>Profits</a>
+	<a *ngIf="router.url === '/admin'" routerLink="reservations" mat-button>Reservations</a>
+	<a *ngIf="router.url === '/reservations'" routerLink="profits"  mat-button>Profits</a>
+	<a *ngIf="router.url === '/reservations'" routerLink="admin" mat-button>Home</a>
+	<a *ngIf="router.url === '/profits'" routerLink="admin"  mat-button>Home</a>
+	<a *ngIf="router.url === '/profits'" routerLink="reservations" mat-button>Reservations</a>
+</mat-toolbar>
