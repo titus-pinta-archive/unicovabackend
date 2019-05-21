@@ -72,34 +72,18 @@ module.exports = app => {
 				const type = req.body.type;
 				const price = config.parking_types[type].price;
 				const time = config.parking_types[type].time;
+				Utils.reserveParking(
+					req.params.user_id,
+					req.params.parking_id,
+					type,
+					price,
+					time,
+					Date.now() ? !(req.body.time) : req.body.time
+				)
 
-
-				const Event = new Events.reserveSpotEvent({
-					time: Date.now(),
-					spot: req.params.parking_id,
-					user: req.params.user_id,
-					type: type,
-					price: price
-				});
-				Event.save()
-					.then(event => {
-						//Utils.aggregateSpot(event.spot);
-						setTimeout(() => {
-							const FreeEvent = new Events.freeSpotEvent({
-								time: Date.now(),
-								spot: req.params.parking_id,
-								user: req.params.user_id
-							});
-							FreeEvent.save()
-								.then(() => Utils.aggregateAll());
-						}, time * 1000);
-						Utils.aggregateAll();
-						res.json(event);
-					})
-					.catch(Utils.sendError(res));
 			})
 			.catch(Utils.sendError(res));
-		})
+		});
 
 	//Block Spot
 

@@ -186,6 +186,8 @@ const addReservation = (user_id, parking_id, time, type) => {
 	rule.hour = time.getHours();
 
 	var job = schedule.scheduleJob(rule, () => {
+		reserveParking(user_id, parking_id, type, parking_types[type].price);
+
 		const Event = new Events.reserveSpotEvent({
 			time: Date.now(),
 			spot: parking_id,
@@ -221,6 +223,37 @@ const initReservations = () => {
 		.then(reservations => {
 			reservations.map(r => addReservation(r.user, r.spot, r.start, r.type));	
 		});
+}
+
+const reserveParking = (user_id, parking_id, type, price, time, when) => {
+	isFreeSpot(req.params.parking_id)
+		.then( () => {
+			const Event = new Events.reserveSpotEvent({
+				time: Date.now(),
+				spot: parking_id,
+				user: user_id,
+				type: type,
+				price: price
+			});
+			schedule.scheduleJob(Date.now() ? !when : when, () => {
+				Event.save()
+					.then(event => {
+						//Utils.aggregateSpot(event.spot);
+						setTimeout(() => {
+							const FreeEvent = new Events.freeSpotEvent({
+								time: Date.now(),
+								spot: req.params.parking_id,
+								user: req.params.user_id
+							});
+							FreeEvent.save()
+								.then(() => Utils.aggregateAll());
+						}, time * 1000);
+						Utils.aggregateAll();
+						res.json(event);
+					})
+					.catch(err => console.log(err));
+				}
+			);});
 }
 
 const sseSubscribe = (app) => {
