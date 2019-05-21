@@ -35,7 +35,7 @@ module.exports = app => {
 						exp: (new Date().getTime() + 3600 * 1000)/1000,
 						data: u
 						}, 'UNICOVA');
-					res.json({jwt: token});
+					res.json({jwt: token,,id:u._id});
 				} else {
 					Utils.sendError(res)('Email and Password do not match');
 				}
@@ -50,6 +50,8 @@ module.exports = app => {
 				exp: (new Date().getTime() + 3600 * 1000)/1000,
 				data: {admin: true}} , 'UNICOVA');
 			res.json({jwt: token});
+		}else {
+					Utils.sendError(res)('Email and Password do not match');
 		}
 	});
 
