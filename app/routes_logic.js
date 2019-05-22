@@ -193,16 +193,17 @@ module.exports = app => {
 			spot: req.params.parking_id,
 			type: req.body.type
 		});
-		Utils.addReservation(Reservation.user, Reservation.spot,
-			Reservation.start, Reservation.type);
-
+			console.log(Reservation);
 		Reservation.save()
 			.then(reservation => res.json(reservation))
 			.catch(Utils.sendError(res));
+		Utils.addReservation(Reservation.user, Reservation.spot,
+			Reservation.start, Reservation.type);
+
 	});
 
 	//Unsubscribe
-	app.post('/api/unschedule/:reservation_id',
+	app.post('/api/unschedule/:user_id/:reservation_id',
 		passport.authenticate('jwt', {session: false}), Utils.userRole, 
 		(req, res) => {
 		Reservations.findByIdAndUpdate(req.params.reservation_id, {

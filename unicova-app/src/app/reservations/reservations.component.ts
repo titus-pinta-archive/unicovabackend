@@ -20,10 +20,16 @@ export class ReservationsComponent implements OnInit {
 		private reservations: ReservationsService
 	
 	) { 
-		this.reservations.getMyReservations(this.token.user()._id);
+		this.reservationsList = this.reservations.getMyReservations(this.token.user()._id);
 	}
 
   ngOnInit() {
   }
 
+	unsubscribe(reservation_id) {
+		console.log('Mere');
+		this.reservations.Unsubscribe(this.token.user()._id, reservation_id).subscribe(ret => {
+			this.dialogRef.close(true);
+		});
+	}
 }

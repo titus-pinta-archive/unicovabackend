@@ -26,4 +26,8 @@ export class ReservationsService {
 	getReservations(): any {
 		return this.reservations;
 	}
+
+	Unsubscribe(user_id, reservation_id) :any {
+		return this.http.post(`/api/unschedule/${user_id}/${reservation_id}`, {});
+	}
 }

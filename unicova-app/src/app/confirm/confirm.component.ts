@@ -22,7 +22,7 @@ export class ConfirmComponent implements OnInit {
 
 	ngOnInit() {
 		this.confirmForm = this.fb.group({
-			time: '',
+			time: new Date().toISOString(),
 			type: ''
 		});
 	}

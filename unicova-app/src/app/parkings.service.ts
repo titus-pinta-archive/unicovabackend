@@ -42,7 +42,17 @@ export class ParkingsService {
 		return this.http.delete(`${this.API_ROOT_URL}/${parking_id}`);
 	}
 
-	updateParking() {
+	updateParking(value:any) :any {
+		let val = {
+			_id: value._id,
+			address: value.address,
+			location: {
+				x: value.lat,
+				y: value.long
+			},
+			spots: value.spots
+		};
+		return this.http.put(`${this.API_ROOT_URL}/${value._id}`, val);
 	
 	}
 
@@ -66,5 +76,10 @@ export class ParkingsService {
 	reserveParking(parking_id, user_id, vals) {
 		console.log(vals);
 		return this.http.post(`/api/reserve/${parking_id}/${user_id}`, vals);
+	}
+
+	scheduleParking (parking_id, user_id, vals) {
+		console.log(vals);
+		return this.http.post(`/api/schedule/${parking_id}/${user_id}`, vals);
 	}
 }

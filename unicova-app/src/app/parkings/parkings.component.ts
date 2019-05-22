@@ -65,7 +65,8 @@ export class ParkingsComponent {
 		dialogRef.afterClosed().subscribe(ret => {
 			if (ret) {
 				let user_id = this.token.user()._id;
-				this.parkings.reserveParking(parking_id, user_id,
+				console.log(ret);
+				this.parkings.scheduleParking(parking_id, user_id,
 					ret).subscribe(r => {
 					this.flash.show('Reservation succesful', {cssClass: 'flash-succes'});
 				});
@@ -96,7 +97,15 @@ export class ParkingsComponent {
 	}
 
 	update(parking) {
-		let dialogRef = this.parking.open(ParkingComponent);
+		let dialogRef = this.parking.open(ParkingComponent, {data: parking});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				ret._id = parking._id;
+				this.parkings.updateParking(ret).subscribe(r => {
+					this.flash.show('Unlock succesful', {cssClass: 'flash-succes'});
+				});
+			}
+		});
 	}
 
 	delete(parking_id) {

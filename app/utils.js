@@ -40,7 +40,7 @@ const userRole = (req, res, next) => {
 }
 
 const sendError = res => err => {
-	res.status(500);
+	res.status(200);
 	res.send(err);
 }
 

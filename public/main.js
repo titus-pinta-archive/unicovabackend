@@ -631,7 +631,7 @@ var ConfirmComponent = /** @class */ (function () {
     }
     ConfirmComponent.prototype.ngOnInit = function () {
         this.confirmForm = this.fb.group({
-            time: '',
+            time: new Date().toISOString(),
             type: ''
         });
     };
@@ -1005,31 +1005,48 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ParkingComponent = /** @class */ (function () {
-    function ParkingComponent(dialogRef, flash, parkings, fb) {
+    function ParkingComponent(dialogRef, flash, parkings, fb, data) {
         this.dialogRef = dialogRef;
         this.flash = flash;
         this.parkings = parkings;
         this.fb = fb;
+        this.data = data;
     }
     ParkingComponent.prototype.ngOnInit = function () {
-        this.parkingForm = this.fb.group({
-            address: '',
-            spots: '',
-            long: '',
-            lat: ''
-        });
+        console.log(this.data);
+        if (!this.data) {
+            this.parkingForm = this.fb.group({
+                address: '',
+                spots: '',
+                long: '',
+                lat: ''
+            });
+        }
+        else {
+            this.parkingForm = this.fb.group({
+                address: this.data.address,
+                spots: this.data.spots.total,
+                long: this.data.location.x,
+                lat: this.data.location.y
+            });
+        }
     };
     ParkingComponent.prototype.addParking = function () {
         var _this = this;
-        this.parkings.addParking(this.parkingForm.value).subscribe(function (ret) {
-            if (ret._id != undefined) {
-                _this.flash.show('Add succesful', { cssClass: 'flash-succes' });
-                _this.dialogRef.close(true);
-            }
-            else {
-                _this.flash.show(ret, { cssClass: 'flash-error' });
-            }
-        });
+        if (!this.data._id) {
+            this.parkings.addParking(this.parkingForm.value).subscribe(function (ret) {
+                if (ret._id != undefined) {
+                    _this.flash.show('Add succesful', { cssClass: 'flash-succes' });
+                    _this.dialogRef.close(true);
+                }
+                else {
+                    _this.flash.show(ret, { cssClass: 'flash-error' });
+                }
+            });
+        }
+        else {
+            this.dialogRef.close(this.parkingForm.value);
+        }
     };
     ParkingComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1037,10 +1054,11 @@ var ParkingComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./parking.component.html */ "./src/app/parking/parking.component.html"),
             styles: [__webpack_require__(/*! ./parking.component.css */ "./src/app/parking/parking.component.css")]
         }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](4, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(_angular_material__WEBPACK_IMPORTED_MODULE_2__["MAT_DIALOG_DATA"])),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"],
             angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__["FlashMessagesService"],
             _parkings_service__WEBPACK_IMPORTED_MODULE_5__["ParkingsService"],
-            _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormBuilder"]])
+            _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormBuilder"], Object])
     ], ParkingComponent);
     return ParkingComponent;
 }());
@@ -1095,7 +1113,17 @@ var ParkingsService = /** @class */ (function () {
     ParkingsService.prototype.deleteParking = function (parking_id) {
         return this.http.delete(this.API_ROOT_URL + "/" + parking_id);
     };
-    ParkingsService.prototype.updateParking = function () {
+    ParkingsService.prototype.updateParking = function (value) {
+        var val = {
+            _id: value._id,
+            address: value.address,
+            location: {
+                x: value.lat,
+                y: value.long
+            },
+            spots: value.spots
+        };
+        return this.http.put(this.API_ROOT_URL + "/" + value._id, val);
     };
     ParkingsService.prototype.getParkings = function () {
         return this.parkings;
@@ -1114,6 +1142,10 @@ var ParkingsService = /** @class */ (function () {
     ParkingsService.prototype.reserveParking = function (parking_id, user_id, vals) {
         console.log(vals);
         return this.http.post("/api/reserve/" + parking_id + "/" + user_id, vals);
+    };
+    ParkingsService.prototype.scheduleParking = function (parking_id, user_id, vals) {
+        console.log(vals);
+        return this.http.post("/api/schedule/" + parking_id + "/" + user_id, vals);
     };
     ParkingsService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -1224,7 +1256,8 @@ var ParkingsComponent = /** @class */ (function () {
         dialogRef.afterClosed().subscribe(function (ret) {
             if (ret) {
                 var user_id = _this.token.user()._id;
-                _this.parkings.reserveParking(parking_id, user_id, ret).subscribe(function (r) {
+                console.log(ret);
+                _this.parkings.scheduleParking(parking_id, user_id, ret).subscribe(function (r) {
                     _this.flash.show('Reservation succesful', { cssClass: 'flash-succes' });
                 });
             }
@@ -1253,7 +1286,16 @@ var ParkingsComponent = /** @class */ (function () {
         });
     };
     ParkingsComponent.prototype.update = function (parking) {
-        var dialogRef = this.parking.open(_parking_parking_component__WEBPACK_IMPORTED_MODULE_8__["ParkingComponent"]);
+        var _this = this;
+        var dialogRef = this.parking.open(_parking_parking_component__WEBPACK_IMPORTED_MODULE_8__["ParkingComponent"], { data: parking });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                ret._id = parking._id;
+                _this.parkings.updateParking(ret).subscribe(function (r) {
+                    _this.flash.show('Unlock succesful', { cssClass: 'flash-succes' });
+                });
+            }
+        });
     };
     ParkingsComponent.prototype.delete = function (parking_id) {
         var _this = this;
@@ -1324,11 +1366,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var chartjs_plugin_datalabels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chartjs-plugin-datalabels */ "./node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js");
 /* harmony import */ var chartjs_plugin_datalabels__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(chartjs_plugin_datalabels__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+
 
 
 
 var ProfitspageComponent = /** @class */ (function () {
-    function ProfitspageComponent() {
+    function ProfitspageComponent(http) {
+        this.http = http;
         this.barChartOptions = {
             responsive: true,
             scales: { xAxes: [{}], yAxes: [{}] },
@@ -1339,15 +1384,24 @@ var ProfitspageComponent = /** @class */ (function () {
                 }
             }
         };
-        this.barChartLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+        this.barChartLabels = [];
         this.barChartType = 'bar';
         this.barChartLegend = true;
         this.barChartPlugins = [chartjs_plugin_datalabels__WEBPACK_IMPORTED_MODULE_2__];
         this.barChartData = [
-            { data: [65, 59, 80, 81, 56, 55, 40], label: 'Profit' },
+            { data: [], label: 'Profit' },
         ];
     }
     ProfitspageComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        var prof = this.http.get('/api/profits');
+        prof.subscribe(function (x) {
+            x.map(function (e) {
+                _this.barChartLabels.push(e.address);
+                var d = _this.barChartData[0].data;
+                d.push(e.profit);
+            });
+        });
     };
     ProfitspageComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1355,7 +1409,7 @@ var ProfitspageComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./profitspage.component.html */ "./src/app/profitspage/profitspage.component.html"),
             styles: [__webpack_require__(/*! ./profitspage.component.css */ "./src/app/profitspage/profitspage.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClient"]])
     ], ProfitspageComponent);
     return ProfitspageComponent;
 }());
@@ -1382,7 +1436,7 @@ module.exports = "mat-form-field {\n\twidth: 100%;\n}\n\n/*# sourceMappingURL=da
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h2 mat-dialog-title>Register</h2>\n<form [formGroup]=\"registerForm\">\n<mat-dialog-content class=\"mat-typography\">\n\t<mat-form-field>\n\t\t<input type=\"email\" matInput placeholder=\"Email\" formControlName=\"email\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"password\" matInput placeholder=\"Password\" formControlName=\"password\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"First Name\" formControlName=\"first_name\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"Last Name\" formControlName=\"last_name\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"Licence Plate\" formControlName=\"licence_plate\">\n\t</mat-form-field>\n\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n\t<button color=\"primary\" mat-raised-button [mat-dialog-close]=\"true\" cdkFocusInitial [disabled]=\"!registerForm.valid\" (click)=\"register()\">Register</button>\n</mat-dialog-actions>\n</form>\n"
+module.exports = "<h2 mat-dialog-title>Register</h2>\n<form [formGroup]=\"registerForm\">\n<mat-dialog-content class=\"mat-typography\">\n\t<mat-form-field>\n\t\t<input type=\"email\" matInput placeholder=\"Email\" formControlName=\"email\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"password\" matInput placeholder=\"Password\" formControlName=\"password\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"First Name\" formControlName=\"firstName\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"Last Name\" formControlName=\"lastName\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"Licence Plate\" formControlName=\"licencePlate\">\n\t</mat-form-field>\n\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n\t<button color=\"primary\" mat-raised-button [mat-dialog-close]=\"true\" cdkFocusInitial [disabled]=\"!registerForm.valid\" (click)=\"register()\">Register</button>\n</mat-dialog-actions>\n</form>\n"
 
 /***/ }),
 
@@ -1423,12 +1477,22 @@ var RegisterComponent = /** @class */ (function () {
         this.registerForm = this.fb.group({
             email: '',
             password: '',
-            first_name: '',
-            last_name: '',
-            licence_plate: ''
+            firstName: '',
+            lastName: '',
+            licencePlate: ''
         });
     };
     RegisterComponent.prototype.register = function () {
+        var _this = this;
+        this.user.addUser(this.registerForm.value).subscribe(function (ret) {
+            if (ret._id != undefined) {
+                _this.flash.show('Register in succesful', { cssClass: 'flash-succes' });
+                _this.dialogRef.close(true);
+            }
+            else {
+                _this.flash.show(JSON.parse(ret), { cssClass: 'flash-error' });
+            }
+        });
     };
     RegisterComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1481,6 +1545,9 @@ var ReservationsService = /** @class */ (function () {
     ReservationsService.prototype.getReservations = function () {
         return this.reservations;
     };
+    ReservationsService.prototype.Unsubscribe = function (user_id, reservation_id) {
+        return this.http.post("/api/unschedule/" + user_id + "/" + reservation_id, {});
+    };
     ReservationsService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
@@ -1512,7 +1579,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h2 mat-dialog-title>Reservations</h2>\n<mat-dialog-content class=\"mat-typography\">\n\t<div \n\t  *ngFor=\"let reservation of this.reservationsList | async\">\n\t\t<mat-list-item role=\"listitem\" > {{ reservation.user.email }} on {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><mat-divider></mat-divider>\n\t</div>\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n</mat-dialog-actions>\n"
+module.exports = "<h2 mat-dialog-title>Reservations</h2>\n<mat-dialog-content class=\"mat-typography\">\n\t<div \n\t  *ngFor=\"let reservation of this.reservationsList | async\">\n\t\t<mat-list-item role=\"listitem\" > {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><button mat-button (click)=\"unsubscribe(this.reservation._id)\">Unsubscribe</button><mat-divider></mat-divider>\n\t</div>\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n</mat-dialog-actions>\n"
 
 /***/ }),
 
@@ -1541,9 +1608,16 @@ var ReservationsComponent = /** @class */ (function () {
         this.dialogRef = dialogRef;
         this.token = token;
         this.reservations = reservations;
-        this.reservations.getMyReservations(this.token.user()._id);
+        this.reservationsList = this.reservations.getMyReservations(this.token.user()._id);
     }
     ReservationsComponent.prototype.ngOnInit = function () {
+    };
+    ReservationsComponent.prototype.unsubscribe = function (reservation_id) {
+        var _this = this;
+        console.log('Mere');
+        this.reservations.Unsubscribe(this.token.user()._id, reservation_id).subscribe(function (ret) {
+            _this.dialogRef.close(true);
+        });
     };
     ReservationsComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1699,7 +1773,7 @@ var UsersService = /** @class */ (function () {
         this.REGISTER_URL = '/api/users';
     }
     UsersService.prototype.addUser = function (value) {
-        return this.http.post(this.REGISTER_URL, { params: value });
+        return this.http.post(this.REGISTER_URL, value);
     };
     UsersService.prototype.deleteUser = function () {
     };

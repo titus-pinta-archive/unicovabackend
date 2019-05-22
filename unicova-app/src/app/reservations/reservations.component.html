@@ -2,7 +2,7 @@
 <mat-dialog-content class="mat-typography">
 	<div 
 	  *ngFor="let reservation of this.reservationsList | async">
-		<mat-list-item role="listitem" > {{ reservation.user.email }} on {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><mat-divider></mat-divider>
+		<mat-list-item role="listitem" > {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><button mat-button (click)="unsubscribe(this.reservation._id)">Unsubscribe</button><mat-divider></mat-divider>
 	</div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

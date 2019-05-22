@@ -27,13 +27,22 @@ export class RegisterComponent implements OnInit {
 		this.registerForm = this.fb.group({
 			email: '',
 			password: '',
-			first_name: '',
-			last_name: '',
-			licence_plate: ''
+			firstName: '',
+			lastName: '',
+			licencePlate: ''
 		});
 	}
 
 	register() {
+			this.user.addUser(this.registerForm.value).subscribe(ret => {
+				if (ret._id != undefined) {
+					this.flash.show('Register in succesful', {cssClass: 'flash-succes'});
+					this.dialogRef.close(true);
+				
+				} else {
+					this.flash.show(JSON.parse(ret), {cssClass: 'flash-error'});
+				}
+			});
 	}
 
 }

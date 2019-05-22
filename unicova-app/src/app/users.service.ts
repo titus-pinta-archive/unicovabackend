@@ -17,8 +17,8 @@ export class UsersService {
 	constructor(private http: HttpClient) {
 	}
 
-	addUser(value: any) {
-		return this.http.post(this.REGISTER_URL, {params: value});
+	addUser(value: any) :any {
+		return this.http.post(this.REGISTER_URL, value);
 	}
 
 	deleteUser() {

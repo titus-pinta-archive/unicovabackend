@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FlashMessagesService } from 'angular2-flash-messages';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ParkingsService } from '../parkings.service'
@@ -18,19 +18,31 @@ export class ParkingComponent implements OnInit {
 		private dialogRef: MatDialogRef<ParkingComponent>,
 		private flash: FlashMessagesService,
 		private parkings: ParkingsService,
-		private fb: FormBuilder
+		private fb: FormBuilder,
+		@Inject(MAT_DIALOG_DATA) public data: any
 	) { }
 
-  ngOnInit() {
-		this.parkingForm = this.fb.group({
-			address: '',
-			spots: '',
-			long: '',
-			lat: ''
-		});
-  }
+	ngOnInit() {
+		console.log(this.data);
+		if (!this.data) {
+			this.parkingForm = this.fb.group({
+				address: '',
+				spots: '',
+				long: '',
+				lat: ''
+			});
+		} else {
+			this.parkingForm = this.fb.group({
+				address: this.data.address,
+				spots: this.data.spots.total,
+				long: this.data.location.x,
+				lat: this.data.location.y
+			});
+		}
+	}
 
 	addParking() {
+		if(!this.data._id){
 		this.parkings.addParking(this.parkingForm.value).subscribe(ret => {
 			if (ret._id != undefined) {
 					this.flash.show('Add succesful', {cssClass: 'flash-succes'});
@@ -39,5 +51,8 @@ export class ParkingComponent implements OnInit {
 					this.flash.show(ret, {cssClass: 'flash-error'});
 			}
 		});
+		} else {
+			this.dialogRef.close(this.parkingForm.value);
+		}
 	}
 }

@@ -28,6 +28,7 @@ module.exports = app => {
 	});
 	app.post('/api/users', (req, res) => {	
 		const user = new Users(req.body);
+		console.log(user);
 		user.save()
 			.then(user => res.json(user))
 			.catch(sendError(res));
