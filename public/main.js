@@ -1033,7 +1033,8 @@ var ParkingComponent = /** @class */ (function () {
     };
     ParkingComponent.prototype.addParking = function () {
         var _this = this;
-        if (!this.data._id) {
+        console.log(this.data);
+        if (this.data == null) {
             this.parkings.addParking(this.parkingForm.value).subscribe(function (ret) {
                 if (ret._id != undefined) {
                     _this.flash.show('Add succesful', { cssClass: 'flash-succes' });

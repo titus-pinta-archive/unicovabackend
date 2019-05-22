@@ -42,7 +42,8 @@ export class ParkingComponent implements OnInit {
 	}
 
 	addParking() {
-		if(!this.data._id){
+		console.log(this.data);
+		if(this.data == null){
 		this.parkings.addParking(this.parkingForm.value).subscribe(ret => {
 			if (ret._id != undefined) {
 					this.flash.show('Add succesful', {cssClass: 'flash-succes'});
