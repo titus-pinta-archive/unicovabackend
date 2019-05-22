@@ -1,6 +1,9 @@
 <h2 mat-dialog-title>Reservations</h2>
 <mat-dialog-content class="mat-typography">
-	Jos PSD
+	<div 
+	  *ngFor="let reservation of this.reservationsList | async">
+		<mat-list-item role="listitem" > {{ reservation.user.email }} on {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><mat-divider></mat-divider>
+	</div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
 	<button mat-button mat-dialog-close>Cancel</button>

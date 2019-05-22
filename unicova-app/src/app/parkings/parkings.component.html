@@ -8,15 +8,15 @@
 			<agm-marker [latitude]="parking.location.x" [longitude]="parking.location.y"></agm-marker>
 		</agm-map>
 		<mat-action-row *ngIf="storage.get('jwt') && router.url === '/'">
-	    		<button mat-button color="accent" (click)="reserveNow()">REZERVE NOW</button>
-	    		<button mat-button color="accent" (click)="reserve()">REZERVE</button>
-	    		<button mat-button color="accent" (click)="schedule()">SCHEDULE</button>
+	    		<button mat-button color="accent" (click)="reserveNow(parking._id)">REZERVE NOW</button>
+	    		<button mat-button color="accent" (click)="reserve(parking._id)">REZERVE</button>
+	    		<button mat-button color="accent" (click)="schedule(parking._id)">SCHEDULE</button>
 	      	</mat-action-row>
 		<mat-action-row *ngIf="router.url === '/admin'">
-	    		<button mat-button color="warn" (click)=block()>BLOCK</button>
-	    		<button mat-button color="warn" (click)="unblock()">UNBLOCK</button>
-	    		<button mat-button color="primary" (click)="update()">UPDATE</button>
-	    		<button mat-button color="warn" (click)="delete()">DELETE</button>
+	    		<button mat-button color="warn" (click)=block(parking._id)>BLOCK</button>
+	    		<button mat-button color="warn" (click)="unblock(parking._id)">UNBLOCK</button>
+	    		<button mat-button color="primary" (click)="update(parking)">UPDATE</button>
+	    		<button mat-button color="warn" (click)="delete(parking._id)">DELETE</button>
 	      	</mat-action-row>
 	</mat-expansion-panel>
 </mat-accordion>

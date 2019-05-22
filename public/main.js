@@ -446,7 +446,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _confirm_confirm_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./confirm/confirm.component */ "./src/app/confirm/confirm.component.ts");
 /* harmony import */ var _parking_parking_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./parking/parking.component */ "./src/app/parking/parking.component.ts");
 /* harmony import */ var _profitspage_profitspage_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./profitspage/profitspage.component */ "./src/app/profitspage/profitspage.component.ts");
-/* harmony import */ var ng2_charts__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ng2-charts */ "./node_modules/ng2-charts/fesm5/ng2-charts.js");
+/* harmony import */ var _authorization_service__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./authorization.service */ "./src/app/authorization.service.ts");
+/* harmony import */ var ng2_charts__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ng2-charts */ "./node_modules/ng2-charts/fesm5/ng2-charts.js");
+
 
 
 
@@ -497,7 +499,7 @@ var AppModule = /** @class */ (function () {
                 _reservations_reservations_component__WEBPACK_IMPORTED_MODULE_19__["ReservationsComponent"]
             ],
             imports: [
-                ng2_charts__WEBPACK_IMPORTED_MODULE_23__["ChartsModule"],
+                ng2_charts__WEBPACK_IMPORTED_MODULE_24__["ChartsModule"],
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
                 _app_routing_module__WEBPACK_IMPORTED_MODULE_7__["AppRoutingModule"],
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_10__["BrowserAnimationsModule"],
@@ -505,6 +507,7 @@ var AppModule = /** @class */ (function () {
                 _angular_material_expansion__WEBPACK_IMPORTED_MODULE_5__["MatExpansionModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_4__["MatButtonModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_4__["MatDialogModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_4__["MatRadioModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_4__["MatListModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_4__["MatInputModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
@@ -516,11 +519,60 @@ var AppModule = /** @class */ (function () {
                 }),
                 angular2_flash_messages__WEBPACK_IMPORTED_MODULE_17__["FlashMessagesModule"].forRoot()
             ],
-            providers: [],
+            providers: [
+                {
+                    provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_6__["HTTP_INTERCEPTORS"],
+                    useClass: _authorization_service__WEBPACK_IMPORTED_MODULE_23__["AuthorizationService"],
+                    multi: true,
+                }
+            ],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_8__["AppComponent"]]
         })
     ], AppModule);
     return AppModule;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/authorization.service.ts":
+/*!******************************************!*\
+  !*** ./src/app/authorization.service.ts ***!
+  \******************************************/
+/*! exports provided: AuthorizationService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthorizationService", function() { return AuthorizationService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var angular_webstorage_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! angular-webstorage-service */ "./node_modules/angular-webstorage-service/bundles/angular-webstorage-service.es5.js");
+
+
+
+var AuthorizationService = /** @class */ (function () {
+    function AuthorizationService(storage) {
+        this.storage = storage;
+    }
+    AuthorizationService.prototype.intercept = function (req, next) {
+        console.log(this.storage.get('jwt'));
+        req = req.clone({
+            setHeaders: {
+                'Authorization': "Bearer " + this.storage.get('jwt'),
+            },
+        });
+        return next.handle(req);
+    };
+    AuthorizationService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](0, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(angular_webstorage_service__WEBPACK_IMPORTED_MODULE_2__["LOCAL_STORAGE"])),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [angular_webstorage_service__WEBPACK_IMPORTED_MODULE_2__["WebStorageService"]])
+    ], AuthorizationService);
+    return AuthorizationService;
 }());
 
 
@@ -534,7 +586,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "mat-form-field {\n\twidth: 100%;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29uZmlybS9jb25maXJtLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Q0FDQyxXQUFXO0FBQ1oiLCJmaWxlIjoic3JjL2FwcC9jb25maXJtL2NvbmZpcm0uY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIm1hdC1mb3JtLWZpZWxkIHtcblx0d2lkdGg6IDEwMCU7XG59XG4iXX0= */"
+module.exports = "mat-form-field, mat-radio-button {\n\twidth: 100%;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29uZmlybS9jb25maXJtLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Q0FDQyxXQUFXO0FBQ1oiLCJmaWxlIjoic3JjL2FwcC9jb25maXJtL2NvbmZpcm0uY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIm1hdC1mb3JtLWZpZWxkLCBtYXQtcmFkaW8tYnV0dG9uIHtcblx0d2lkdGg6IDEwMCU7XG59XG4iXX0= */"
 
 /***/ }),
 
@@ -545,7 +597,7 @@ module.exports = "mat-form-field {\n\twidth: 100%;\n}\n\n/*# sourceMappingURL=da
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h2 mat-dialog-title>Are you sure?</h2>\n<form>\n<mat-dialog-content>\n\t<mat-form-field *ngIf=\"this.data.input === 'time'\">\n\t\t<input type=\"date\" matInput placeholder=\"When?\" formControlName=\"time\">\n\t</mat-form-field>\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>NO</button>\n\t<button color=\"primary\" mat-raised-button [mat-dialog-close]=\"true\" cdkFocusInitial>YES</button>\n</mat-dialog-actions>\n</form>\n"
+module.exports = "<h2 mat-dialog-title>Are you sure?</h2>\n<form [formGroup]=\"confirmForm\">\n<mat-dialog-content>\n\t<mat-form-field *ngIf=\"this.data.input === 'time' || this.data.input == 'datetime'\">\n\t\t<input type=\"datetime\" matInput placeholder=\"When?\" formControlName=\"time\">\n\t</mat-form-field>\n\t<mat-radio-group *ngIf=\"this.data.type === true\" aria-label=\"Select an option\" formControlName=\"type\">\n\t\t<mat-radio-button value=\"fast\">Fast</mat-radio-button>\n\t\t<mat-radio-button value=\"normal\">Normal</mat-radio-button>\n\t</mat-radio-group>\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>NO</button>\n\t<button color=\"primary\" mat-raised-button [mat-dialog-close]=\"true\" cdkFocusInitial (click)=\"yes()\">YES</button>\n</mat-dialog-actions>\n</form>\n"
 
 /***/ }),
 
@@ -564,18 +616,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
 /* harmony import */ var angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! angular2-flash-messages */ "./node_modules/angular2-flash-messages/module/index.js");
 /* harmony import */ var angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+
 
 
 
 
 var ConfirmComponent = /** @class */ (function () {
-    function ConfirmComponent(dialogRef, flash, data) {
+    function ConfirmComponent(dialogRef, flash, fb, data) {
         this.dialogRef = dialogRef;
         this.flash = flash;
+        this.fb = fb;
         this.data = data;
     }
     ConfirmComponent.prototype.ngOnInit = function () {
-        console.log(this.data);
+        this.confirmForm = this.fb.group({
+            time: '',
+            type: ''
+        });
+    };
+    ConfirmComponent.prototype.yes = function () {
+        this.dialogRef.close(this.confirmForm.value);
     };
     ConfirmComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -583,9 +644,10 @@ var ConfirmComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./confirm.component.html */ "./src/app/confirm/confirm.component.html"),
             styles: [__webpack_require__(/*! ./confirm.component.css */ "./src/app/confirm/confirm.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](2, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(_angular_material__WEBPACK_IMPORTED_MODULE_2__["MAT_DIALOG_DATA"])),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](3, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(_angular_material__WEBPACK_IMPORTED_MODULE_2__["MAT_DIALOG_DATA"])),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"],
-            angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__["FlashMessagesService"], Object])
+            angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__["FlashMessagesService"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormBuilder"], Object])
     ], ConfirmComponent);
     return ConfirmComponent;
 }());
@@ -631,20 +693,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
 /* harmony import */ var _login_login_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../login/login.component */ "./src/app/login/login.component.ts");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var angular_webstorage_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! angular-webstorage-service */ "./node_modules/angular-webstorage-service/bundles/angular-webstorage-service.es5.js");
+/* harmony import */ var _token_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../token.service */ "./src/app/token.service.ts");
+
+
 
 
 
 
 
 var HomepageComponent = /** @class */ (function () {
-    function HomepageComponent(login, router) {
+    function HomepageComponent(login, storage, token, router) {
         this.login = login;
+        this.storage = storage;
+        this.token = token;
         this.router = router;
     }
     HomepageComponent.prototype.ngOnInit = function () {
-        console.log(this.router.url);
         if (this.router.url === '/admin') {
-            this.openLogin();
+            if (!(this.token.user()) || !(this.token.user().admin)) {
+                this.openLogin();
+            }
         }
     };
     HomepageComponent.prototype.openLogin = function () {
@@ -662,7 +731,10 @@ var HomepageComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./homepage.component.html */ "./src/app/homepage/homepage.component.html"),
             styles: [__webpack_require__(/*! ./homepage.component.css */ "./src/app/homepage/homepage.component.css")]
         }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](1, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(angular_webstorage_service__WEBPACK_IMPORTED_MODULE_5__["LOCAL_STORAGE"])),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_2__["MatDialog"],
+            angular_webstorage_service__WEBPACK_IMPORTED_MODULE_5__["WebStorageService"],
+            _token_service__WEBPACK_IMPORTED_MODULE_6__["TokenService"],
             _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]])
     ], HomepageComponent);
     return HomepageComponent;
@@ -905,7 +977,7 @@ module.exports = "mat-form-field {\n\twidth: 100%;\n}\n\n/*# sourceMappingURL=da
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h2 mat-dialog-title>Parking</h2>\n<form [formGroup]=\"parkingForm\">\n<mat-dialog-content class=\"mat-typography\">\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"Address\" formControlName=\"address\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"number\" matInput placeholder=\"Number of Spots\" formControlName=\"spots\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"number\" matInput placeholder=\"Longitude\" formControlName=\"location.x\" step=\"0.000000000000000000001\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"number\" matInput placeholder=\"Latitude\" formControlName=\"location.y\" step=\"0.000000000000000000001\">\n\t</mat-form-field>\n\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n\t<button color=\"primary\" mat-raised-button [mat-dialog-close]=\"true\" cdkFocusInitial [disabled]=\"!parkingForm.valid\" >Save</button>\n</mat-dialog-actions>\n</form>\n"
+module.exports = "<h2 mat-dialog-title>Parking</h2>\n<form [formGroup]=\"parkingForm\">\n<mat-dialog-content class=\"mat-typography\">\n\t<mat-form-field>\n\t\t<input matInput placeholder=\"Address\" formControlName=\"address\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"number\" matInput placeholder=\"Number of Spots\" formControlName=\"spots\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"number\" matInput placeholder=\"Longitude\" formControlName=\"long\" step=\"0.000000000000000000001\">\n\t</mat-form-field>\n\t<mat-form-field>\n\t\t<input type=\"number\" matInput placeholder=\"Latitude\" formControlName=\"lat\" step=\"0.000000000000000000001\">\n\t</mat-form-field>\n\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n\t<button color=\"primary\" mat-raised-button cdkFocusInitial (click)=\"addParking()\" [disabled]=\"!parkingForm.valid\" >Save</button>\n</mat-dialog-actions>\n</form>\n"
 
 /***/ }),
 
@@ -925,15 +997,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! angular2-flash-messages */ "./node_modules/angular2-flash-messages/module/index.js");
 /* harmony import */ var angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+/* harmony import */ var _parkings_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../parkings.service */ "./src/app/parkings.service.ts");
+
 
 
 
 
 
 var ParkingComponent = /** @class */ (function () {
-    function ParkingComponent(dialogRef, flash, fb) {
+    function ParkingComponent(dialogRef, flash, parkings, fb) {
         this.dialogRef = dialogRef;
         this.flash = flash;
+        this.parkings = parkings;
         this.fb = fb;
     }
     ParkingComponent.prototype.ngOnInit = function () {
@@ -944,6 +1019,18 @@ var ParkingComponent = /** @class */ (function () {
             lat: ''
         });
     };
+    ParkingComponent.prototype.addParking = function () {
+        var _this = this;
+        this.parkings.addParking(this.parkingForm.value).subscribe(function (ret) {
+            if (ret._id != undefined) {
+                _this.flash.show('Add succesful', { cssClass: 'flash-succes' });
+                _this.dialogRef.close(true);
+            }
+            else {
+                _this.flash.show(ret, { cssClass: 'flash-error' });
+            }
+        });
+    };
     ParkingComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-parking',
@@ -952,6 +1039,7 @@ var ParkingComponent = /** @class */ (function () {
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"],
             angular2_flash_messages__WEBPACK_IMPORTED_MODULE_3__["FlashMessagesService"],
+            _parkings_service__WEBPACK_IMPORTED_MODULE_5__["ParkingsService"],
             _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormBuilder"]])
     ], ParkingComponent);
     return ParkingComponent;
@@ -974,6 +1062,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+
 
 
 
@@ -981,19 +1071,49 @@ var ParkingsService = /** @class */ (function () {
     function ParkingsService(http) {
         this.http = http;
         this.ROOT_URL = '/parkings';
+        this.API_ROOT_URL = '/api/parkings';
         this.updateParkings();
+        this.subscribe();
+        this.parkings = new rxjs__WEBPACK_IMPORTED_MODULE_3__["BehaviorSubject"](null);
     }
     ParkingsService.prototype.updateParkings = function () {
-        this.parkings = this.http.get(this.ROOT_URL);
+        var _this = this;
+        this.http.get(this.ROOT_URL)
+            .subscribe(function (x) { return _this.parkings.next(x); });
     };
-    ParkingsService.prototype.addParking = function () {
+    ParkingsService.prototype.addParking = function (value) {
+        var val = {
+            address: value.address,
+            location: {
+                x: value.lat,
+                y: value.long
+            },
+            spots: value.spots
+        };
+        return this.http.post(this.API_ROOT_URL, val);
     };
-    ParkingsService.prototype.deleteParking = function () {
+    ParkingsService.prototype.deleteParking = function (parking_id) {
+        return this.http.delete(this.API_ROOT_URL + "/" + parking_id);
     };
     ParkingsService.prototype.updateParking = function () {
     };
     ParkingsService.prototype.getParkings = function () {
         return this.parkings;
+    };
+    ParkingsService.prototype.blockParking = function (parking_id) {
+        return this.http.post("/api/block/" + parking_id, {});
+    };
+    ParkingsService.prototype.unblockParking = function (parking_id) {
+        return this.http.post("/api/unblock/" + parking_id, {});
+    };
+    ParkingsService.prototype.subscribe = function () {
+        var _this = this;
+        var source = new EventSource('/subscribe');
+        source.addEventListener('message', function (e) { return _this.updateParkings(); });
+    };
+    ParkingsService.prototype.reserveParking = function (parking_id, user_id, vals) {
+        console.log(vals);
+        return this.http.post("/api/reserve/" + parking_id + "/" + user_id, vals);
     };
     ParkingsService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -1026,7 +1146,7 @@ module.exports = "mat-panel-title {\n\tflex: 10;\n}\n\nagm-map {\n\theight: 300p
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<mat-accordion>\n\t<mat-expansion-panel *ngFor=\"let parking of this.parkingList | async\">\n\t\t<mat-expansion-panel-header>\n\t\t\t<mat-panel-title>{{ parking.address }}</mat-panel-title>\n\t\t\t<mat-panel-description>{{ parking.spots.free }}/{{ parking.spots.total }}</mat-panel-description>\n\t\t</mat-expansion-panel-header>\n\t\t<agm-map [latitude]=\"parking.location.x\" [longitude]=\"parking.location.y\">\n\t\t\t<agm-marker [latitude]=\"parking.location.x\" [longitude]=\"parking.location.y\"></agm-marker>\n\t\t</agm-map>\n\t\t<mat-action-row *ngIf=\"storage.get('jwt') && router.url === '/'\">\n\t    \t\t<button mat-button color=\"accent\" (click)=\"reserveNow()\">REZERVE NOW</button>\n\t    \t\t<button mat-button color=\"accent\" (click)=\"reserve()\">REZERVE</button>\n\t    \t\t<button mat-button color=\"accent\" (click)=\"schedule()\">SCHEDULE</button>\n\t      \t</mat-action-row>\n\t\t<mat-action-row *ngIf=\"router.url === '/admin'\">\n\t    \t\t<button mat-button color=\"warn\" (click)=block()>BLOCK</button>\n\t    \t\t<button mat-button color=\"warn\" (click)=\"unblock()\">UNBLOCK</button>\n\t    \t\t<button mat-button color=\"primary\" (click)=\"update()\">UPDATE</button>\n\t    \t\t<button mat-button color=\"warn\" (click)=\"delete()\">DELETE</button>\n\t      \t</mat-action-row>\n\t</mat-expansion-panel>\n</mat-accordion>\n\n"
+module.exports = "<mat-accordion>\n\t<mat-expansion-panel *ngFor=\"let parking of this.parkingList | async\">\n\t\t<mat-expansion-panel-header>\n\t\t\t<mat-panel-title>{{ parking.address }}</mat-panel-title>\n\t\t\t<mat-panel-description>{{ parking.spots.free }}/{{ parking.spots.total }}</mat-panel-description>\n\t\t</mat-expansion-panel-header>\n\t\t<agm-map [latitude]=\"parking.location.x\" [longitude]=\"parking.location.y\">\n\t\t\t<agm-marker [latitude]=\"parking.location.x\" [longitude]=\"parking.location.y\"></agm-marker>\n\t\t</agm-map>\n\t\t<mat-action-row *ngIf=\"storage.get('jwt') && router.url === '/'\">\n\t    \t\t<button mat-button color=\"accent\" (click)=\"reserveNow(parking._id)\">REZERVE NOW</button>\n\t    \t\t<button mat-button color=\"accent\" (click)=\"reserve(parking._id)\">REZERVE</button>\n\t    \t\t<button mat-button color=\"accent\" (click)=\"schedule(parking._id)\">SCHEDULE</button>\n\t      \t</mat-action-row>\n\t\t<mat-action-row *ngIf=\"router.url === '/admin'\">\n\t    \t\t<button mat-button color=\"warn\" (click)=block(parking._id)>BLOCK</button>\n\t    \t\t<button mat-button color=\"warn\" (click)=\"unblock(parking._id)\">UNBLOCK</button>\n\t    \t\t<button mat-button color=\"primary\" (click)=\"update(parking)\">UPDATE</button>\n\t    \t\t<button mat-button color=\"warn\" (click)=\"delete(parking._id)\">DELETE</button>\n\t      \t</mat-action-row>\n\t</mat-expansion-panel>\n</mat-accordion>\n\n"
 
 /***/ }),
 
@@ -1050,6 +1170,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
 /* harmony import */ var _confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../confirm/confirm.component */ "./src/app/confirm/confirm.component.ts");
 /* harmony import */ var _parking_parking_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../parking/parking.component */ "./src/app/parking/parking.component.ts");
+/* harmony import */ var _token_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../token.service */ "./src/app/token.service.ts");
+
 
 
 
@@ -1060,41 +1182,89 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ParkingsComponent = /** @class */ (function () {
-    function ParkingsComponent(confirm, parkings, router, parking, flash, storage) {
+    function ParkingsComponent(confirm, parkings, router, parking, token, flash, storage) {
         this.confirm = confirm;
         this.parkings = parkings;
         this.router = router;
         this.parking = parking;
+        this.token = token;
         this.flash = flash;
         this.storage = storage;
     }
     ParkingsComponent.prototype.ngOnInit = function () {
         this.parkingList = this.parkings.getParkings();
     };
-    ParkingsComponent.prototype.reserveNow = function () {
-        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: {} });
-    };
-    ParkingsComponent.prototype.reserve = function () {
-        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], {
-            data: { input: 'time' }
+    ParkingsComponent.prototype.reserveNow = function (parking_id) {
+        var _this = this;
+        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: { type: true } });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                var user_id = _this.token.user()._id;
+                _this.parkings.reserveParking(parking_id, user_id, ret).subscribe(function (r) {
+                    _this.flash.show('Reservation succesful', { cssClass: 'flash-succes' });
+                });
+            }
         });
     };
-    ParkingsComponent.prototype.schedule = function () {
-        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], {
-            data: { input: 'time' }
+    ParkingsComponent.prototype.reserve = function (parking_id) {
+        var _this = this;
+        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: { type: true, input: 'time' } });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                var user_id = _this.token.user()._id;
+                _this.parkings.reserveParking(parking_id, user_id, ret).subscribe(function (r) {
+                    _this.flash.show('Reservation succesful', { cssClass: 'flash-succes' });
+                });
+            }
         });
     };
-    ParkingsComponent.prototype.block = function () {
-        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: {} });
+    ParkingsComponent.prototype.schedule = function (parking_id) {
+        var _this = this;
+        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: { type: true, input: 'time' } });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                var user_id = _this.token.user()._id;
+                _this.parkings.reserveParking(parking_id, user_id, ret).subscribe(function (r) {
+                    _this.flash.show('Reservation succesful', { cssClass: 'flash-succes' });
+                });
+            }
+        });
     };
-    ParkingsComponent.prototype.unblock = function () {
+    ParkingsComponent.prototype.block = function (parking_id) {
+        var _this = this;
         var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: {} });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                _this.parkings.blockParking(parking_id).subscribe(function (r) {
+                    _this.flash.show('Block succesful', { cssClass: 'flash-succes' });
+                });
+            }
+        });
     };
-    ParkingsComponent.prototype.update = function () {
+    ParkingsComponent.prototype.unblock = function (parking_id) {
+        var _this = this;
+        var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: {} });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                _this.parkings.unblockParking(parking_id).subscribe(function (r) {
+                    _this.flash.show('Unlock succesful', { cssClass: 'flash-succes' });
+                });
+            }
+        });
+    };
+    ParkingsComponent.prototype.update = function (parking) {
         var dialogRef = this.parking.open(_parking_parking_component__WEBPACK_IMPORTED_MODULE_8__["ParkingComponent"]);
     };
-    ParkingsComponent.prototype.delete = function () {
+    ParkingsComponent.prototype.delete = function (parking_id) {
+        var _this = this;
         var dialogRef = this.confirm.open(_confirm_confirm_component__WEBPACK_IMPORTED_MODULE_7__["ConfirmComponent"], { data: {} });
+        dialogRef.afterClosed().subscribe(function (ret) {
+            if (ret) {
+                _this.parkings.deleteParking(parking_id).subscribe(function (r) {
+                    _this.flash.show('Delete succesful', { cssClass: 'flash-succes' });
+                });
+            }
+        });
     };
     ParkingsComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1102,11 +1272,12 @@ var ParkingsComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./parkings.component.html */ "./src/app/parkings/parkings.component.html"),
             styles: [__webpack_require__(/*! ./parkings.component.css */ "./src/app/parkings/parkings.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](5, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(angular_webstorage_service__WEBPACK_IMPORTED_MODULE_3__["LOCAL_STORAGE"])),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](6, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(angular_webstorage_service__WEBPACK_IMPORTED_MODULE_3__["LOCAL_STORAGE"])),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_6__["MatDialog"],
             _parkings_service__WEBPACK_IMPORTED_MODULE_2__["ParkingsService"],
             _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"],
             _angular_material__WEBPACK_IMPORTED_MODULE_6__["MatDialog"],
+            _token_service__WEBPACK_IMPORTED_MODULE_9__["TokenService"],
             angular2_flash_messages__WEBPACK_IMPORTED_MODULE_5__["FlashMessagesService"],
             angular_webstorage_service__WEBPACK_IMPORTED_MODULE_3__["WebStorageService"]])
     ], ParkingsComponent);
@@ -1296,12 +1467,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ReservationsService = /** @class */ (function () {
-    //readonly ROOT_URL = 'localhost:8080/parkings';
     function ReservationsService(http) {
         this.http = http;
-        this.ROOT_URL = 'https://jsonplaceholder.typicode.com/users';
+        this.ROOT_URL = '/api/reservations';
         this.updateReservations();
     }
+    ReservationsService.prototype.getMyReservations = function (user_id) {
+        return this.http.get(this.ROOT_URL + "/" + user_id);
+    };
     ReservationsService.prototype.updateReservations = function () {
         this.reservations = this.http.get(this.ROOT_URL);
     };
@@ -1339,7 +1512,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h2 mat-dialog-title>Reservations</h2>\n<mat-dialog-content class=\"mat-typography\">\n\tJos PSD\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n</mat-dialog-actions>\n"
+module.exports = "<h2 mat-dialog-title>Reservations</h2>\n<mat-dialog-content class=\"mat-typography\">\n\t<div \n\t  *ngFor=\"let reservation of this.reservationsList | async\">\n\t\t<mat-list-item role=\"listitem\" > {{ reservation.user.email }} on {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><mat-divider></mat-divider>\n\t</div>\n</mat-dialog-content>\n<mat-dialog-actions align=\"end\">\n\t<button mat-button mat-dialog-close>Cancel</button>\n</mat-dialog-actions>\n"
 
 /***/ }),
 
@@ -1356,12 +1529,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
+/* harmony import */ var _reservations_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../reservations.service */ "./src/app/reservations.service.ts");
+/* harmony import */ var _token_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../token.service */ "./src/app/token.service.ts");
+
+
 
 
 
 var ReservationsComponent = /** @class */ (function () {
-    function ReservationsComponent(dialogRef) {
+    function ReservationsComponent(dialogRef, token, reservations) {
         this.dialogRef = dialogRef;
+        this.token = token;
+        this.reservations = reservations;
+        this.reservations.getMyReservations(this.token.user()._id);
     }
     ReservationsComponent.prototype.ngOnInit = function () {
     };
@@ -1371,7 +1551,9 @@ var ReservationsComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./reservations.component.html */ "./src/app/reservations/reservations.component.html"),
             styles: [__webpack_require__(/*! ./reservations.component.css */ "./src/app/reservations/reservations.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_material__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"],
+            _token_service__WEBPACK_IMPORTED_MODULE_4__["TokenService"],
+            _reservations_service__WEBPACK_IMPORTED_MODULE_3__["ReservationsService"]])
     ], ReservationsComponent);
     return ReservationsComponent;
 }());
@@ -1398,7 +1580,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<mat-list role=\"list\">\n\t<div \n\t  *ngFor=\"let reservation of this.reservationsList | async\">\n\t\t<mat-list-item role=\"listitem\" > {{ reservation.name }}</mat-list-item><mat-divider></mat-divider>\n\t</div>\n</mat-list>\n"
+module.exports = "<mat-list role=\"list\">\n\t<div \n\t  *ngFor=\"let reservation of this.reservationsList | async\">\n\t\t<mat-list-item role=\"listitem\" > {{ reservation.user.email }} on {{ reservation.spot.address }} in {{ reservation.start }}</mat-list-item><mat-divider></mat-divider>\n\t</div>\n</mat-list>\n"
 
 /***/ }),
 
@@ -1434,6 +1616,58 @@ var ReservationspageComponent = /** @class */ (function () {
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_reservations_service__WEBPACK_IMPORTED_MODULE_2__["ReservationsService"]])
     ], ReservationspageComponent);
     return ReservationspageComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/token.service.ts":
+/*!**********************************!*\
+  !*** ./src/app/token.service.ts ***!
+  \**********************************/
+/*! exports provided: TokenService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TokenService", function() { return TokenService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var angular_webstorage_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! angular-webstorage-service */ "./node_modules/angular-webstorage-service/bundles/angular-webstorage-service.es5.js");
+
+
+
+var TokenService = /** @class */ (function () {
+    function TokenService(storage) {
+        this.storage = storage;
+    }
+    TokenService.prototype.decode = function (token) {
+        var base64Url = token.split('.')[1];
+        var base64 = decodeURIComponent(atob(base64Url).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(base64);
+    };
+    TokenService.prototype.user = function () {
+        if (this.storage.get('jwt')) {
+            var t = this.decode(this.storage.get('jwt'));
+            if (t.exp >= Date.now() / 1000) {
+                return this.decode(this.storage.get('jwt')).data;
+            }
+            else {
+                this.storage.remove('jwt');
+            }
+        }
+    };
+    TokenService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](0, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])(angular_webstorage_service__WEBPACK_IMPORTED_MODULE_2__["LOCAL_STORAGE"])),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [angular_webstorage_service__WEBPACK_IMPORTED_MODULE_2__["WebStorageService"]])
+    ], TokenService);
+    return TokenService;
 }());
 
 

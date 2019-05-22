@@ -6,6 +6,7 @@ const database = require('./config/database');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
+const fs = require('mz/fs');
 
 mongoose.Promise = require('bluebird')
 mongoose.connect(database.localUrl);
@@ -22,6 +23,15 @@ require('./app/routes_user.js')(app);
 require('./app/routes_parking.js')(app);
 require('./app/routes_logic.js')(app);
 require('./app/routes_history.js')(app);
+
+app.get('/admin', (req, res) => {
+	fs.readFile('public/index.html')
+		.then(cont => {
+			res.status(200);
+			res.end(cont);
+		})
+		.catch(Utils.sendError(res));
+});
 
 Utils = require('./app/utils');
 Utils.aggregateAll();

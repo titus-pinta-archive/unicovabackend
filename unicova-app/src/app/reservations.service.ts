@@ -8,12 +8,15 @@ export class ReservationsService {
 
 	reservations: any;
 
-	readonly ROOT_URL = 'https://jsonplaceholder.typicode.com/users';
-	//readonly ROOT_URL = 'localhost:8080/parkings';
+	readonly ROOT_URL = '/api/reservations';
 
 
 	constructor(private http: HttpClient) {
 		this.updateReservations();
+	}
+
+	getMyReservations(user_id) {
+		return this.http.get(`${this.ROOT_URL}/${user_id}`);
 	}
 
 	updateReservations() {

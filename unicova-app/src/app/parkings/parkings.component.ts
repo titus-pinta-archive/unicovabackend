@@ -6,6 +6,7 @@ import { FlashMessagesService } from 'angular2-flash-messages';
 import { MatDialog, MatDialogRef} from '@angular/material';
 import { ConfirmComponent } from '../confirm/confirm.component';
 import { ParkingComponent } from '../parking/parking.component';
+import { TokenService } from '../token.service';
 
 @Component({
   selector: 'app-parkings',
@@ -21,6 +22,7 @@ export class ParkingsComponent {
 		private parkings: ParkingsService,
 		private router: Router,
 		private parking: MatDialog,
+		private token: TokenService,
 		private flash: FlashMessagesService,
 		@Inject(LOCAL_STORAGE) private storage: WebStorageService
 	) { }
@@ -29,36 +31,83 @@ export class ParkingsComponent {
 		this.parkingList = this.parkings.getParkings();
 	}
 
-	reserveNow() {
-		let dialogRef = this.confirm.open(ConfirmComponent, {data: {}});
-	}
-
-	reserve() {
-		let dialogRef = this.confirm.open(ConfirmComponent, {
-			data: {input: 'time'}
+	reserveNow(parking_id) {
+		let dialogRef = this.confirm.open(ConfirmComponent,
+			{data: {type: true}});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				let user_id = this.token.user()._id;
+				this.parkings.reserveParking(parking_id, user_id,
+					ret).subscribe(r => {
+					this.flash.show('Reservation succesful', {cssClass: 'flash-succes'});
+				});
+			}
 		});
 	}
 
-	schedule() {
-		let dialogRef = this.confirm.open(ConfirmComponent, {
-			data: {input: 'time'}
+	reserve(parking_id) {
+		let dialogRef = this.confirm.open(ConfirmComponent,
+			{data: {type: true, input: 'time'}});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				let user_id = this.token.user()._id;
+				this.parkings.reserveParking(parking_id, user_id,
+					ret).subscribe(r => {
+					this.flash.show('Reservation succesful', {cssClass: 'flash-succes'});
+				});
+			}
 		});
 	}
 
-	block() {
-		let dialogRef = this.confirm.open(ConfirmComponent, {data: {}});
+	schedule(parking_id) {
+		let dialogRef = this.confirm.open(ConfirmComponent,
+			{data: {type: true, input: 'time'}});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				let user_id = this.token.user()._id;
+				this.parkings.reserveParking(parking_id, user_id,
+					ret).subscribe(r => {
+					this.flash.show('Reservation succesful', {cssClass: 'flash-succes'});
+				});
+			}
+		});
 	}
 
-	unblock() {
+	block(parking_id) {
 		let dialogRef = this.confirm.open(ConfirmComponent, {data: {}});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				this.parkings.blockParking(parking_id).subscribe(r => {
+					this.flash.show('Block succesful', {cssClass: 'flash-succes'});
+				});
+			}
+		});
 	}
 
-	update() {
+	unblock(parking_id) {
+		let dialogRef = this.confirm.open(ConfirmComponent, {data: {}});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				this.parkings.unblockParking(parking_id).subscribe(r => {
+					this.flash.show('Unlock succesful', {cssClass: 'flash-succes'});
+				});
+			}
+		});
+	}
+
+	update(parking) {
 		let dialogRef = this.parking.open(ParkingComponent);
 	}
 
-	delete() {
+	delete(parking_id) {
 		let dialogRef = this.confirm.open(ConfirmComponent, {data: {}});
+		dialogRef.afterClosed().subscribe(ret => {
+			if (ret) {
+				this.parkings.deleteParking(parking_id).subscribe(r => {
+					this.flash.show('Delete succesful', {cssClass: 'flash-succes'});
+				});
+			}
+		});
 	}
 
 }

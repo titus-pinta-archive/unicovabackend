@@ -1,12 +1,16 @@
 <h2 mat-dialog-title>Are you sure?</h2>
-<form>
+<form [formGroup]="confirmForm">
 <mat-dialog-content>
-	<mat-form-field *ngIf="this.data.input === 'time'">
-		<input type="date" matInput placeholder="When?" formControlName="time">
+	<mat-form-field *ngIf="this.data.input === 'time' || this.data.input == 'datetime'">
+		<input type="datetime" matInput placeholder="When?" formControlName="time">
 	</mat-form-field>
+	<mat-radio-group *ngIf="this.data.type === true" aria-label="Select an option" formControlName="type">
+		<mat-radio-button value="fast">Fast</mat-radio-button>
+		<mat-radio-button value="normal">Normal</mat-radio-button>
+	</mat-radio-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
 	<button mat-button mat-dialog-close>NO</button>
-	<button color="primary" mat-raised-button [mat-dialog-close]="true" cdkFocusInitial>YES</button>
+	<button color="primary" mat-raised-button [mat-dialog-close]="true" cdkFocusInitial (click)="yes()">YES</button>
 </mat-dialog-actions>
 </form>

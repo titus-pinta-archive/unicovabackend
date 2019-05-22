@@ -31,7 +31,7 @@ module.exports = app => {
 			.catch(sendError(res));
 		Utils.aggregateAll();
 	});
-	app.put('/api/parkings/:parkings_id',
+	app.put('/api/parkings/:parking_id',
 		passport.authenticate('jwt', {session: false}), Utils.adminRole,
 		(req, res) => {
 		Parkings.findByIdAndUpdate(req.params.parking_id, req.body,
@@ -41,7 +41,7 @@ module.exports = app => {
 			.catch(sendError(res));
 		Utils.aggregateAll();
 	});
-	app.delete('/api/parkings/:parkings_id',
+	app.delete('/api/parkings/:parking_id',
 		passport.authenticate('jwt', {session: false}), Utils.adminRole,
 		(req, res) => {
 		Parkings.findByIdAndRemove(req.params.parking_id)

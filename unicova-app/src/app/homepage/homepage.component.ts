@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef} from '@angular/material';
 import { LoginComponent } from '../login/login.component';
 import { Router } from '@angular/router';
+import { LOCAL_STORAGE, WebStorageService } from 'angular-webstorage-service';
+import { TokenService } from '../token.service';
 
 @Component({
   selector: 'app-homepage',
@@ -12,13 +14,16 @@ export class HomepageComponent implements OnInit {
 
 	constructor(
 		private login: MatDialog,
+		@Inject(LOCAL_STORAGE) private storage: WebStorageService,
+		private token: TokenService,
 		private router: Router
 	) { }
 
 	ngOnInit() {
-		console.log(this.router.url);
 		if (this.router.url === '/admin') {
-			this.openLogin();
+			if(!(this.token.user()) || !(this.token.user().admin)) {
+				this.openLogin();
+			}
 		}
 	}
 
@@ -26,7 +31,7 @@ export class HomepageComponent implements OnInit {
 			let dialogRef = this.login.open(LoginComponent);
 			dialogRef.afterClosed().subscribe(res => {
 				if (!res) {
-					this.openLogin();
+					this.openLogin()
 				}
 			});
 	}

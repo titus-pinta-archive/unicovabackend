@@ -7,8 +7,6 @@ import { Observable, of } from 'rxjs';
   providedIn: 'root'
 })
 export class UsersService {
-	parkings: any;
-
 	readonly ROOT_URL = '';
 	readonly LOGIN_URL = '/login';
 	readonly ADMIN_LOGIN_URL = '/adminlogin';

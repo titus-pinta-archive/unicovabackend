@@ -11,14 +11,24 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 })
 export class ConfirmComponent implements OnInit {
 
+	confirmForm :FormGroup;
+
 	constructor(
 		private dialogRef: MatDialogRef<ConfirmComponent>,
 		private flash: FlashMessagesService,
+		private fb: FormBuilder,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) { }
 
 	ngOnInit() {
-		console.log(this.data);
-  }
+		this.confirmForm = this.fb.group({
+			time: '',
+			type: ''
+		});
+	}
+
+	yes() {
+		this.dialogRef.close(this.confirmForm.value);
+	}
 
 }

@@ -8,15 +8,15 @@
 		<input type="number" matInput placeholder="Number of Spots" formControlName="spots">
 	</mat-form-field>
 	<mat-form-field>
-		<input type="number" matInput placeholder="Longitude" formControlName="location.x" step="0.000000000000000000001">
+		<input type="number" matInput placeholder="Longitude" formControlName="long" step="0.000000000000000000001">
 	</mat-form-field>
 	<mat-form-field>
-		<input type="number" matInput placeholder="Latitude" formControlName="location.y" step="0.000000000000000000001">
+		<input type="number" matInput placeholder="Latitude" formControlName="lat" step="0.000000000000000000001">
 	</mat-form-field>
 
 </mat-dialog-content>
 <mat-dialog-actions align="end">
 	<button mat-button mat-dialog-close>Cancel</button>
-	<button color="primary" mat-raised-button [mat-dialog-close]="true" cdkFocusInitial [disabled]="!parkingForm.valid" >Save</button>
+	<button color="primary" mat-raised-button cdkFocusInitial (click)="addParking()" [disabled]="!parkingForm.valid" >Save</button>
 </mat-dialog-actions>
 </form>

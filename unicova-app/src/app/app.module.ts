@@ -6,11 +6,12 @@ import { MatToolbarModule,
 	 MatButtonModule,
 	 MatDialogModule,
 	MatListModule,
+	MatRadioModule,
 	MatInputModule
 	} from '@angular/material';
 import { MatExpansionModule } from '@angular/material/expansion';
 
-import { HttpClientModule } from '@angular/common/http'; 
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; 
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -31,6 +32,8 @@ import { ReservationsComponent } from './reservations/reservations.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { ParkingComponent } from './parking/parking.component';
 import { ProfitspageComponent } from './profitspage/profitspage.component';
+
+import { AuthorizationService } from './authorization.service';
 
 import { ChartsModule } from 'ng2-charts'
 @NgModule({
@@ -63,6 +66,7 @@ import { ChartsModule } from 'ng2-charts'
 	  MatExpansionModule,
 	  MatButtonModule,
 		MatDialogModule,
+		MatRadioModule,
 		MatListModule,
 		MatInputModule,
 		FormsModule,
@@ -77,7 +81,13 @@ import { ChartsModule } from 'ng2-charts'
 		}),
 		FlashMessagesModule.forRoot()
   ],
-  providers: [],
+	providers: [
+		{
+			provide : HTTP_INTERCEPTORS,
+			useClass: AuthorizationService,
+			multi   : true,
+		}
+	],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -22,6 +22,35 @@ module.exports = app => {
 	app.get('/parkings', (req, res) => {
 		res.json(Utils.readReplicas.parkings);
 	})
+
+	app.get('/api/profits', (req, res) => {
+		var o = {};
+		o.map = function () {
+			if (this.kind == 'reserve') {
+				emit(this.spot, this.price);
+			}
+		};
+		o.reduce = function (key, values) { return Array.sum(values);};
+
+		Events.Events
+			.mapReduce(o)
+			.then(ret => {
+					Parkings.find()
+						.exec()
+						.then(parkings => {
+							res.json(parkings.map( parking => {
+								parking = parking.toObject();
+								const el = ret.find(elem => elem._id == String(parking._id));
+								if (el) { 
+									parking.profit = el.value;
+								} else {
+									parking.profit = 0;
+								}
+								return parking;
+							}));
+						});
+			});
+	});
 	
 	//Authentificate
 	app.get('/login', (req, res) => {
@@ -45,12 +74,15 @@ module.exports = app => {
 
 	//Authentificate Admin
 	app.get('/adminlogin', (req, res) => {
-		if (req.query.name == 'admin' && req.query.password == 'admin') {
+		if (req.query.email == 'admin' && req.query.password == 'admin') {
 			const token = jwt.sign({
 				exp: (new Date().getTime() + 3600 * 1000)/1000,
 				data: {admin: true}} , 'UNICOVA');
 			res.json({jwt: token});
+		} else {
+			Utils.sendError(res)('Email and Password do not match');
 		}
+
 	});
 
 	//Reserve Parking
